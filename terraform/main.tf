@@ -59,10 +59,10 @@ module "data_bucket" {
 }
 
 module "bls_lambda_function" {
-  source               = "./${local.bls_lamba_name}" 
+  source               = "./${local.bls_lambda_name}" 
   region               = var.region  
-  lambda_function_name = local.bls_lamba_name
-  lambda_zip_file      = "${local.bls_lamba_name}.zip"
+  lambda_function_name = local.bls_lambda_name
+  lambda_zip_file      = "${local.bls_lambda_name}.zip"
 
   environment_variables = {
     S3_BUCKET_NAME = "your-s3-bucket-name"
