@@ -2,9 +2,10 @@ import boto3
 import requests
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from datetime import datetime
+import os
 
-S3_BUCKET_NAME = 'mjw-cloudquest-bls-data'
-BASE_URL = 'https://download.bls.gov/pub/time.series/pr/'
+S3_BUCKET_NAME = os.environ['S3_BUCKET_NAME']
+BASE_URL = os.environ['BLS_URL']
 
 USER_AGENT = 'mjwolfeBLSanalytics/1.0 (michael.j.wolfe91@gmail.com)'
 s3_client = boto3.client('s3')
@@ -49,7 +50,7 @@ def get_files_to_update():
                     files_to_update.add(file_name)
     return files_to_update
 
-def is_file_updated(file_name):
+def is_file_updated(file_name): #check if file is current, so that we don't upload the same file twice
     try:
         s3_response = s3_client.head_object(Bucket=S3_BUCKET_NAME, Key=file_name)
         s3_last_modified = s3_response['LastModified']
@@ -61,8 +62,8 @@ def is_file_updated(file_name):
 
         if url_last_modified:
             url_last_modified = datetime.strptime(url_last_modified, '%a, %d %b %Y %H:%M:%S GMT')
-            #return url_last_modified > s3_last_modified
-            print(f"File {file_name} was last modified on {url_last_modified}")
+            return url_last_modified > s3_last_modified
+        print(f"File {file_name} was last modified on {url_last_modified}")
         return True
     except s3_client.exceptions.NoSuchKey:
         return True
