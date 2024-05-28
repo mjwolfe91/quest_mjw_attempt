@@ -59,7 +59,7 @@ module "data_bucket" {
 }
 
 module "bls_lambda_function" {
-  source               = "./${local.bls_lambda_name}" 
+  source               = "./lambda" 
   region               = var.region  
   lambda_function_name = local.bls_lambda_name
   lambda_zip_file      = "${local.bls_lambda_name}.zip"
