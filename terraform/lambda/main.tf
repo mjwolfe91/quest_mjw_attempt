@@ -35,6 +35,7 @@ resource "aws_lambda_function" "lambda" {
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.9"
+  timeout       = var.timeout
 
   filename         = var.lambda_zip_file
   source_code_hash = filebase64sha256(var.lambda_zip_file)

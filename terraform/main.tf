@@ -9,8 +9,7 @@ locals {
         Action = [
           "s3:ListBucket",
           "s3:GetObject",
-          "s3:PutObject",
-          "s3:HeadObject",
+          "s3:PutObject"
         ],
         Resource = [
           "arn:aws:s3:::${local.data_bucket_name}",
@@ -47,9 +46,8 @@ provider "aws" {
   region  = var.region
 }
 
-module "ops-bucket" {
-  source = "./s3"
-  bucket_name = "mjw-devops"
+data "aws_s3_bucket" "ops_bucket" {
+  bucket = "mjw-devops"
 }
 
 module "data_bucket" {
@@ -62,24 +60,13 @@ module "bls_lambda_function" {
   source               = "./lambda" 
   region               = var.region  
   lambda_function_name = local.bls_lambda_name
-  lambda_zip_file      = "${local.bls_lambda_name}.zip"
+  lambda_zip_file      = "../${local.bls_lambda_name}/${local.bls_lambda_name}.zip"
+  timeout = 300
 
   environment_variables = {
-    S3_BUCKET_NAME = "your-s3-bucket-name"
-    BLS_URL      = "https://download.bls.gov/pub/time.series/pr/" 
+    S3_BUCKET_NAME = local.data_bucket_name
+    BLS_URL      = "https://download.bls.gov" 
   }
 
   policy = local.bls_lambda_policy
-}
-
-output "bls_lambda_function_name" {
-  value = module.bls_lambda_function.lambda_function_name
-}
-
-output "bls_lambda_function_arn" {
-  value = module.bls_lambda_function.lambda_function_arn
-}
-
-output "bls_lambda_role_name" {
-  value = module.bls_lambda_function.lambda_role_name
 }

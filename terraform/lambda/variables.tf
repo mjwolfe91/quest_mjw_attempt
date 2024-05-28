@@ -18,6 +18,12 @@ variable "policy" {
   type        = string
 }
 
+variable "timeout" {
+  description = "The timeout of the Lambda (in seconds)"
+  type = number
+  default = 30
+}
+
 variable "environment_variables" {
   description = "A map of environment variables for the Lambda function."
   type        = map(string)
