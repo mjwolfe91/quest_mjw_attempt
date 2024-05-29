@@ -1,6 +1,7 @@
 locals {
   data_bucket_name = "mjw-cloudquest-bls-data"
   bls_lambda_name  = "get_bls_data"
+  all_data_lambda_name = "get_all_data"
   bls_lambda_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -113,4 +114,34 @@ module "pop_lambda_function" {
 module "report_instance" {
   source = "./sagemaker"
   instance_name = "pop-data-report"
+}
+
+module "all_data_lambda_function" {
+  source               = "./lambda"
+  region               = var.region
+  lambda_function_name = local.all_data_lambda_name
+  lambda_zip_file      = "../${local.all_data_lambda_name}/${local.all_data_lambda_name}.zip"
+
+  environment_variables = {
+    API_URL   = "https://datausa.io/api/data?drilldowns=Nation&measures=Population"
+    S3_BUCKET_NAME = local.data_bucket_name
+    BLS_URL        = "https://download.bls.gov"
+  }
+
+  policy = local.bls_lambda_policy
+}
+
+module "data_queue" {
+  source = "./sqs"
+  queue_name = "data_monitoring"
+}
+
+resource "aws_s3_bucket_notification" "new_api_data" {
+  bucket = aws_s3_bucket.data_bucket.id
+
+  queue {
+    queue_arn     = aws_sqs_queue.data_queue.arn
+    events        = ["s3:ObjectCreated:*"]
+    filter_prefix = "pop_data/"
+  }
 }
