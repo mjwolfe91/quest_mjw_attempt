@@ -1,7 +1,8 @@
 resource "aws_sagemaker_notebook_instance" "sagemaker_notebook" {
-  name                = var.instance_name
-  instance_type       = "ml.t3.medium" # hardcode to free tier
-  role_arn            = aws_iam_role.sagemaker_role.arn
+  name          = var.instance_name
+  instance_type = "ml.t3.medium" # hardcode to free tier
+  role_arn      = aws_iam_role.sagemaker_role.arn
+  lifecycle_config_name = "${var.instance_name}-lifecycle-config"
 }
 
 resource "aws_iam_role" "sagemaker_role" {
@@ -10,8 +11,8 @@ resource "aws_iam_role" "sagemaker_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Action    = "sts:AssumeRole"
-      Effect    = "Allow"
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
       Principal = {
         Service = "sagemaker.amazonaws.com"
       }
@@ -50,4 +51,15 @@ resource "aws_iam_role_policy" "sagemaker_policy" {
       }
     ]
   })
+}
+
+resource "aws_sagemaker_notebook_instance_lifecycle_configuration" "lifecycle_configuration" {
+  name     = "${var.instance_name}-lifecycle-config"
+  on_start = <<SCRIPT
+#!/bin/bash
+sudo -u ec2-user -i <<'EOF'
+# Install dependencies
+conda install -c conda-forge pyspark -y
+EOF
+SCRIPT
 }
