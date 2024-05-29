@@ -112,5 +112,5 @@ module "pop_lambda_function" {
 
 module "report_instance" {
   source = "./sagemaker"
-  instance_name = "pop_data_report"
+  instance_name = "pop-data-report"
 }
