@@ -40,11 +40,7 @@ resource "aws_iam_role_policy" "sagemaker_policy" {
           "logs:CreateLogStream",
           "logs:PutLogEvents",
           "logs:DescribeLogStreams",
-          "s3:CreateBucket",
-          "s3:ListBucket",
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject",
+          "s3:*"
         ],
         Effect   = "Allow",
         Resource = "*"
