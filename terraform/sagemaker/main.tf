@@ -52,15 +52,3 @@ resource "aws_iam_role_policy" "sagemaker_policy" {
     ]
   })
 }
-
-resource "aws_sagemaker_notebook_instance_lifecycle_config" "sagemaker_lifecycle_config" {
-  name = "${var.instance_name}-lifecycle-config"
-
-  on_start = <<SCRIPT
-#!/bin/bash
-sudo -u ec2-user -i <<'EOF'
-# Install dependencies
-conda install -c conda-forge pyspark -y
-EOF
-SCRIPT
-}
