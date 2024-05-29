@@ -1,7 +1,7 @@
 resource "aws_sagemaker_notebook_instance" "sagemaker_notebook" {
-  name          = var.instance_name
-  instance_type = "ml.t3.medium" # hardcode to free tier
-  role_arn      = aws_iam_role.sagemaker_role.arn
+  name                  = var.instance_name
+  instance_type         = "ml.t3.medium" # hardcode to free tier
+  role_arn              = aws_iam_role.sagemaker_role.arn
   lifecycle_config_name = "${var.instance_name}-lifecycle-config"
 }
 
@@ -54,12 +54,11 @@ resource "aws_iam_role_policy" "sagemaker_policy" {
 }
 
 resource "aws_sagemaker_notebook_instance_lifecycle_configuration" "lifecycle_configuration" {
-  name     = "${var.instance_name}-lifecycle-config"
-  on_start = <<SCRIPT
+  name = "${var.instance_name}-lifecycle-config"
+  on_start = base64encode(<<-EOF
 #!/bin/bash
-sudo -u ec2-user -i <<'EOF'
-# Install dependencies
+sudo -u ec2-user -i
 conda install -c conda-forge pyspark -y
 EOF
-SCRIPT
+  )
 }
