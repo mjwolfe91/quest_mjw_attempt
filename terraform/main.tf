@@ -109,3 +109,8 @@ module "pop_lambda_function" {
 
   policy = local.pop_lambda_policy
 }
+
+module "report_instance" {
+  source = "./sagemaker"
+  instance_name = "pop_data_report"
+}
