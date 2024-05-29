@@ -2,7 +2,6 @@ resource "aws_sagemaker_notebook_instance" "sagemaker_notebook" {
   name                = var.instance_name
   instance_type       = "ml.t3.medium" # hardcode to free tier
   role_arn            = aws_iam_role.sagemaker_role.arn
-  lifecycle_config_name = aws_sagemaker_notebook_instance_lifecycle_config.sagemaker_lifecycle_config.name
 }
 
 resource "aws_iam_role" "sagemaker_role" {
