@@ -82,6 +82,10 @@ module "data_bucket" {
   block_public_access = false
 }
 
+data "aws_s3_bucket" "data_bucket" {
+  bucket = local.data_bucket_name
+}
+
 module "bls_lambda_function" {
   source               = "./lambda"
   region               = var.region
@@ -132,16 +136,8 @@ module "all_data_lambda_function" {
 }
 
 module "data_queue" {
-  source = "./sqs"
+  source = "./sqs_for_s3"
   queue_name = "data_monitoring"
-}
-
-resource "aws_s3_bucket_notification" "new_api_data" {
-  bucket = aws_s3_bucket.data_bucket.id
-
-  queue {
-    queue_arn     = aws_sqs_queue.data_queue.arn
-    events        = ["s3:ObjectCreated:*"]
-    filter_prefix = "pop_data/"
-  }
+  bucket_id = data.aws_s3_bucket.data_bucket.id
+  filter_prefix = "pop_data/"
 }
