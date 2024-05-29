@@ -50,7 +50,6 @@ print(f"The standard deviation of the populations from 2013 to 2018 is {df_pop_f
 #For every series_id, find the best year: the year with the max/largest sum of "value" 
 #for all quarters in that year. Generate a report with each series id, the best year for that series, 
 #and the summed value for that year.
-df_pr
 grouped = df_pr.groupby(['series_id', 'year', 'period'])['value'].sum().reset_index()
 
 # Group by series id and year again, and find the year with the maximum sum for each series
@@ -159,3 +158,134 @@ best_years[['series_id', 'year', 'value']]
 </div>
 
 
+
+
+```python
+#Using both dataframes from Part 1 and Part 2, generate a report 
+#that will provide the value for series_id = PRS30006032 and period = Q01 
+#and the population for that given year (if available in the population dataset)
+df_pr_filtered = df_pr[df_pr['series_id'].str.strip() == 'PRS30006032']
+df_pr_filtered = df_pr_filtered[df_pr_filtered['period'].str.strip() == 'Q01']
+df_join = pd.merge(df_pr_filtered, df_pop, left_on='year', right_on='ID Year')
+df_join[['series_id', 'year', 'period', 'value', 'Population']]
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>series_id</th>
+      <th>year</th>
+      <th>period</th>
+      <th>value</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>PRS30006032</td>
+      <td>2013</td>
+      <td>Q01</td>
+      <td>0.8</td>
+      <td>311536594</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>PRS30006032</td>
+      <td>2014</td>
+      <td>Q01</td>
+      <td>-0.1</td>
+      <td>314107084</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>PRS30006032</td>
+      <td>2015</td>
+      <td>Q01</td>
+      <td>-1.6</td>
+      <td>316515021</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PRS30006032</td>
+      <td>2016</td>
+      <td>Q01</td>
+      <td>-1.4</td>
+      <td>318558162</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>PRS30006032</td>
+      <td>2017</td>
+      <td>Q01</td>
+      <td>0.7</td>
+      <td>321004407</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>PRS30006032</td>
+      <td>2018</td>
+      <td>Q01</td>
+      <td>0.4</td>
+      <td>322903030</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>PRS30006032</td>
+      <td>2019</td>
+      <td>Q01</td>
+      <td>-1.6</td>
+      <td>324697795</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>PRS30006032</td>
+      <td>2020</td>
+      <td>Q01</td>
+      <td>-6.7</td>
+      <td>326569308</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>PRS30006032</td>
+      <td>2021</td>
+      <td>Q01</td>
+      <td>1.2</td>
+      <td>329725481</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>PRS30006032</td>
+      <td>2022</td>
+      <td>Q01</td>
+      <td>5.6</td>
+      <td>331097593</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+
+```
