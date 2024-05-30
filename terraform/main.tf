@@ -1,6 +1,6 @@
 locals {
-  data_bucket_name = "mjw-cloudquest-bls-data"
-  bls_lambda_name  = "get_bls_data"
+  data_bucket_name     = "mjw-cloudquest-bls-data"
+  bls_lambda_name      = "get_bls_data"
   all_data_lambda_name = "get_all_data"
   bls_lambda_policy = jsonencode({
     Version = "2012-10-17",
@@ -58,8 +58,8 @@ locals {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect   = "Allow",
-        Action   = [
+        Effect = "Allow",
+        Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents",
@@ -68,10 +68,12 @@ locals {
         Resource = "*",
       },
       {
-        Effect   = "Allow",
-        Action   = [
+        Effect = "Allow",
+        Action = [
           "sqs:ReceiveMessage",
-          "sqs:DeleteMessage"
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes",
+          "sqs:ChangeMessageVisibility"
         ]
         Resource = module.data_queue.queue_arn,
       },
@@ -136,7 +138,7 @@ module "pop_lambda_function" {
 }
 
 module "report_instance" {
-  source = "./sagemaker"
+  source        = "./sagemaker"
   instance_name = "pop-data-report"
 }
 
@@ -147,7 +149,7 @@ module "all_data_lambda_function" {
   lambda_zip_file      = "../${local.all_data_lambda_name}/${local.all_data_lambda_name}.zip"
 
   environment_variables = {
-    API_URL   = "https://datausa.io/api/data?drilldowns=Nation&measures=Population"
+    API_URL        = "https://datausa.io/api/data?drilldowns=Nation&measures=Population"
     S3_BUCKET_NAME = local.data_bucket_name
     BLS_URL        = "https://download.bls.gov"
   }
@@ -156,16 +158,16 @@ module "all_data_lambda_function" {
 }
 
 module "all_data_schedule" {
-  source = "./scheduler"
-  lambda_arn = module.all_data_lambda_function.lambda_arn
+  source      = "./scheduler"
+  lambda_arn  = module.all_data_lambda_function.lambda_arn
   lambda_name = local.all_data_lambda_name
 }
 
 
 module "data_queue" {
-  source = "./sqs_for_s3"
-  queue_name = "data_monitoring"
-  bucket_id = module.data_bucket.bucket_id
+  source        = "./sqs_for_s3"
+  queue_name    = "data_monitoring"
+  bucket_id     = module.data_bucket.bucket_id
   filter_prefix = "pop_data/"
 }
 

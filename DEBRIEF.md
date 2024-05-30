@@ -14,7 +14,7 @@ Initially I wanted to do this with PySpark on EMR, but since I wanted to stick w
 
 ### Part 4
 
-I am still working through this as of late 5/28 evening, but overall a few notes about the prescribed process: a Lambda is not an ideal setting for running these reports, as the size limit prevents loading Pandas and/or PySpark into the environment. I am planning to just do question 1 (population metrics) using numpy by passing in the new JSON file into the Lambda event. I also do not recommend (from painful personal experience) using SQS to manage data pipelines/triggers, due to messy permissions settings, messages disappearing with little to no warning, and poor duplication handling. I will finish 5/29 if given time.
+I am still working through this as of late 5/28 evening, but overall a few notes about the prescribed process: a Lambda is not an ideal setting for running these reports, as the size limit prevents loading Pandas and/or PySpark into the environment. I am planning to just do question 1 (population metrics) using numpy by passing in the new JSON file into the Lambda event. I also do not recommend (from painful personal experience) using SQS to manage data pipelines/triggers, due to messy permissions settings, messages disappearing with little to no warning, and poor duplication handling. You can also trigger a Lambda directly from an S3 bucket event as well, and consume the data that way whilst scaling horizontally as files are added.
 
 ### Overall takeaways
 
