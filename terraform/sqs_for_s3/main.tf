@@ -6,7 +6,29 @@ resource "aws_sqs_queue" "data_queue" {
   visibility_timeout_seconds= 30
 }
 
-resource "aws_s3_bucket_notification" "new_data" {
+resource "aws_sqs_queue_policy" "data_queue_policy" {
+  queue_url = aws_sqs_queue.data_queue.url
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "s3.amazonaws.com"
+        },
+        Action = "sqs:SendMessage",
+        Resource = aws_sqs_queue.data_queue.arn,
+        Condition = {
+          ArnLike = {
+            "aws:SourceArn": var.bucket_arn
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = var.bucket
 
   queue {

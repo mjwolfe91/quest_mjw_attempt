@@ -168,6 +168,7 @@ module "data_queue" {
   source        = "./sqs_for_s3"
   queue_name    = "data_monitoring"
   bucket        = local.data_bucket_name
+  bucket_arn = module.data_bucket.bucket_arn
   filter_prefix = "pop_data/"
 }
 
