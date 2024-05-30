@@ -7,11 +7,15 @@ resource "aws_sqs_queue" "data_queue" {
 }
 
 resource "aws_s3_bucket_notification" "new_data" {
-  bucket = var.bucket_id
+  bucket = var.bucket_arn
 
   queue {
     queue_arn     = aws_sqs_queue.data_queue.arn
     events        = ["s3:ObjectCreated:*"]
     filter_prefix = var.filter_prefix
   }
+}
+
+output "queue_arn" {
+  value = aws_sqs_queue.data_queue.arn
 }

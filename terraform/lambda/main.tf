@@ -51,3 +51,7 @@ resource "aws_lambda_permission" "allow_invocation" {
   function_name = aws_lambda_function.lambda.function_name
   principal     = "*"
 }
+
+output "lambda_arn" {
+  value = aws_lambda_function.lambda.arn
+}

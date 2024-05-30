@@ -29,6 +29,10 @@ jobs:
     - name: Install dependencies and package all data lambda
       run: |
         ./package.sh get_all_data
+
+    - name: Install dependencies and package report lambda
+      run: |
+        ./package.sh get_reports
         
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1

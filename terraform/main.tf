@@ -53,6 +53,27 @@ locals {
       },
     ],
   })
+  report_lambda_name = "get_reports"
+  report_lambda_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "s3:GetObject",
+        ],
+        Resource = "*",
+      },
+      {
+        Effect   = "Allow",
+        Action   = "sqs:ReceiveMessage",
+        Resource = module.data_queue.queue_arn,
+      },
+    ],
+  })
 }
 
 terraform {
@@ -80,10 +101,6 @@ module "data_bucket" {
   source              = "./s3"
   bucket_name         = local.data_bucket_name
   block_public_access = false
-}
-
-data "aws_s3_bucket" "data_bucket" {
-  bucket = local.data_bucket_name
 }
 
 module "bls_lambda_function" {
@@ -135,9 +152,36 @@ module "all_data_lambda_function" {
   policy = local.bls_lambda_policy
 }
 
+module "all_data_schedule" {
+  source = "./scheduler"
+  lambda_arn = module.all_data_lambda_function.lambda_arn
+  lambda_name = local.all_data_lambda_name
+}
+
+
 module "data_queue" {
   source = "./sqs_for_s3"
   queue_name = "data_monitoring"
-  bucket_id = data.aws_s3_bucket.data_bucket.id
+  bucket_arn = module.data_bucket.bucket_arn
   filter_prefix = "pop_data/"
+}
+
+module "report_lambda_function" {
+  source               = "./lambda"
+  region               = var.region
+  lambda_function_name = local.report_lambda_name
+  lambda_zip_file      = "../${local.report_lambda_name}/${local.report_lambda_name}.zip"
+
+  environment_variables = {
+    S3_BUCKET_NAME = local.data_bucket_name
+  }
+
+  policy = local.report_lambda_policy
+}
+
+resource "aws_lambda_event_source_mapping" "report_lambda_trigger" {
+  event_source_arn = module.data_queue.queue_arn
+  function_name    = module.report_lambda_function.lambda_arn
+  batch_size       = 1
+  enabled          = true
 }
