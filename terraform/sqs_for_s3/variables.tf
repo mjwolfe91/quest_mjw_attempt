@@ -3,8 +3,8 @@ variable "queue_name" {
   type = string
 }
 
-variable "bucket_id" {
-  description = "The ID of the bucket being monitored"
+variable "bucket" {
+  description = "The name of the bucket being monitored"
   type = string
 }
 

@@ -167,7 +167,7 @@ module "all_data_schedule" {
 module "data_queue" {
   source        = "./sqs_for_s3"
   queue_name    = "data_monitoring"
-  bucket_id     = module.data_bucket.bucket_id
+  bucket        = local.data_bucket_name
   filter_prefix = "pop_data/"
 }
 
