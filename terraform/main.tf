@@ -69,7 +69,10 @@ locals {
       },
       {
         Effect   = "Allow",
-        Action   = "sqs:ReceiveMessage",
+        Action   = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage"
+        ]
         Resource = module.data_queue.queue_arn,
       },
     ],
@@ -162,7 +165,7 @@ module "all_data_schedule" {
 module "data_queue" {
   source = "./sqs_for_s3"
   queue_name = "data_monitoring"
-  bucket_arn = module.data_bucket.bucket_arn
+  bucket_id = module.data_bucket.bucket_id
   filter_prefix = "pop_data/"
 }
 

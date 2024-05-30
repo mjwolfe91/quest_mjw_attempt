@@ -10,3 +10,7 @@ resource "aws_s3_bucket_public_access_block" "bucket_acl" {
 output "bucket_arn" {
   value = aws_s3_bucket.data_bucket.arn
 }
+
+output "bucket_id" {
+  value = aws_s3_bucket.data_bucket.id
+}

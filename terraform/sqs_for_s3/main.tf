@@ -7,7 +7,7 @@ resource "aws_sqs_queue" "data_queue" {
 }
 
 resource "aws_s3_bucket_notification" "new_data" {
-  bucket = var.bucket_arn
+  bucket = var.bucket_id
 
   queue {
     queue_arn     = aws_sqs_queue.data_queue.arn
