@@ -22,10 +22,10 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
     try:
+        get_api_data()
         files_to_update = get_files_to_update()
         for source_file, s3_key in files_to_update.items():
             update_file_in_s3(source_file, s3_key)
-        get_api_data()
         return {
             'statusCode': 200,
             'body': 'Success'
